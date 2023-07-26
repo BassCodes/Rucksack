@@ -1,0 +1,85 @@
+.audioBlock {
+    display: inline-flex;
+    /* width: auto; */
+    font-family: "nimbus sans",sans-serif;
+    font-size: 0.9rem;
+    align-items: center;
+    padding: 10px;
+    column-gap: 10px;
+    border: solid 1px black
+}
+#playButton {
+    width: 20px;
+    min-width: 20px;
+    height: 20px;
+    padding: 10px;
+    border: 1px solid gray
+}
+
+#playButton:hover,#playButtonSmall:hover {
+    cursor: pointer;
+}
+#audioCard {
+    flex-basis: auto;
+    display: flex;
+    align-items: center;
+    margin-block: 5px;
+    padding-inline-start: 10px;
+    column-gap: 8px;
+}
+#playButtonSmall {
+    display: flex;
+    width: 11px;
+    height: 11px;
+    border: 1px solid gray;
+    padding: 5px;
+}
+#trackNumber {
+     color:gray;
+}
+
+#right {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    row-gap: 3px;
+}
+#progressIndicator {
+    max-width: 100%;
+    width: 0%;
+    height: 100%;
+    background-color: gray;
+}
+#progressTimer {
+    font-size:  0.8em;
+    line-height:  1.6em;
+    
+    user-select: none;
+    white-space: nowrap;
+    word-break:keep-all;
+    word-wrap:normal;
+    color: gray;
+}
+
+#progressBar {
+    width: 100%;
+    min-width: 200px;
+    background-color: lightgray;
+    height: 10px;
+    border: 1px solid gray;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    column-gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* #title { */
+    /* padding-inline: 10px; */
+/* } */
+
+/* *{ */
+    /* box-sizing: border-box; */
+/* } */
