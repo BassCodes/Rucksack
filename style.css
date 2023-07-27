@@ -1,85 +1,94 @@
-.audioBlock {
-    display: inline-flex;
-    /* width: auto; */
-    font-family: "nimbus sans",sans-serif;
-    font-size: 0.9rem;
-    align-items: center;
-    padding: 10px;
-    column-gap: 10px;
-    border: solid 1px black
-}
-#playButton {
-    width: 20px;
-    min-width: 20px;
-    height: 20px;
-    padding: 10px;
-    border: 1px solid gray
+.RSCcontainer {
+	align-items: center;
+	padding: 10px;
 }
 
-#playButton:hover,#playButtonSmall:hover {
-    cursor: pointer;
-}
-#audioCard {
-    flex-basis: auto;
-    display: flex;
-    align-items: center;
-    margin-block: 5px;
-    padding-inline-start: 10px;
-    column-gap: 8px;
-}
-#playButtonSmall {
-    display: flex;
-    width: 11px;
-    height: 11px;
-    border: 1px solid gray;
-    padding: 5px;
-}
-#trackNumber {
-     color:gray;
+.audioGroup audio {
+	margin-inline-start: 20px;
 }
 
-#right {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    row-gap: 3px;
+.RSCcontainer,
+#RSCcard {
+	font-family: "nimbus sans", sans-serif;
+	display: flex;
+	column-gap: 9px;
 }
-#progressIndicator {
-    max-width: 100%;
-    width: 0%;
-    height: 100%;
-    background-color: gray;
-}
-#progressTimer {
-    font-size:  0.8em;
-    line-height:  1.6em;
-    
-    user-select: none;
-    white-space: nowrap;
-    word-break:keep-all;
-    word-wrap:normal;
-    color: gray;
+#RSCbottom {
+	display: flex;
+	column-gap: 9px;
+	align-items: center;
 }
 
-#progressBar {
-    width: 100%;
-    min-width: 200px;
-    background-color: lightgray;
-    height: 10px;
-    border: 1px solid gray;
+#RSCbottom svg {
+	height: 15px;
+	width: auto;
+	cursor: pointer;
 }
 
-.row {
-    display: flex;
-    justify-content: space-between;
-    column-gap: 10px;
-    flex-wrap: wrap;
+#RSCbutton,
+#RSCbuttonSmall {
+	box-sizing: content-box;
 }
 
-/* #title { */
-    /* padding-inline: 10px; */
-/* } */
+#RSCbutton {
+	width: 20px;
+	height: 20px;
+	padding: 10px;
+	border: 1px solid gray;
+}
 
-/* *{ */
-    /* box-sizing: border-box; */
-/* } */
+#RSCbutton:hover,
+#RSCbuttonSmall:hover {
+	cursor: pointer;
+}
+#RSCcard {
+	font-size: 0.9rem;
+	margin-block: 5px;
+	padding-inline: 10px;
+	align-items: center;
+}
+
+#RSCbuttonSmall {
+	display: flex;
+	width: 11px;
+	height: 11px;
+	border: 1px solid gray;
+	padding: 5px;
+}
+#RSCord,
+#RSCtimer {
+	color: gray;
+	user-select: none;
+}
+
+#RSCtimer {
+	font-size: 0.8em;
+	line-height: 1.6em;
+}
+
+#RSCright {
+	flex-direction: column;
+	justify-content: space-between;
+	row-gap: 3px;
+}
+#RSCprogress {
+	max-width: 100%;
+	width: 0%;
+	height: 100%;
+	background-color: gray;
+}
+
+#RSCprogressBox {
+	width: 100%;
+	min-width: 300px;
+	background-color: lightgray;
+	height: 10px;
+	border: 1px solid gray;
+}
+
+#RSCtop {
+	display: flex;
+	justify-content: space-between;
+	column-gap: 10px;
+	flex-wrap: wrap;
+}
