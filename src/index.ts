@@ -32,7 +32,7 @@
 	};
 
 	// Hide audio elements before the document is rendered
-	document.addEventListener("DOMContentLoaded", () => {
+	const hideAllAudioElements = () => {
 		const groups = document.querySelectorAll("div.audioGroup");
 		const audioControls = document.querySelectorAll("audio[controls]");
 		for (const group of groups) {
@@ -43,7 +43,14 @@
 		for (const track of audioControls) {
 			(track as HTMLAudioElement).style.display = "none";
 		}
-	});
+	};
+
+	// Hide audio elements only if and when the document has loaded
+	if (document.readyState === "interactive" || document.readyState === "complete") {
+		hideAllAudioElements();
+	} else {
+		document.addEventListener("DOMContentLoaded", () => hideAllAudioElements);
+	}
 
 	const setup = () => {
 		mediaElements = Array.from(document.querySelectorAll("audio[controls]"));
