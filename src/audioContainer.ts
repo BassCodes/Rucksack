@@ -1,4 +1,4 @@
-import { formatDuration, newDiv } from "./util";
+import { formatDuration, newElement } from "./util";
 import * as Icons from "./icons";
 
 export const getTrackName = (track: HTMLAudioElement): string =>
@@ -41,21 +41,20 @@ export abstract class AudioContainer {
 			this.progress,
 			this.activeTitle,
 			this.bottomBox,
-		] = newDiv(
+		] = newElement(
+			"div",
 			"RSCcontainer",
 			"RSCtimer",
 			"RSCprogressBox",
 			"RSCprogress",
 			"",
-			"RSCbottomBox"
+			"RSCbottom"
 		);
-		const [rightBox, top] = newDiv("RSCright", "RSCtop");
+		const [rightBox, top] = newElement("div", "RSCright", "RSCtop");
 
 		this.button = document.createElement("button");
 		this.button.ariaLabel = "Play/Pause";
-		this.button.tabIndex = 0;
 		this.button.classList.add("RSCbutton", "RSCbigButton", "RSCplaypause");
-		this.bottomBox.id = "RSCbottom";
 
 		this.progressBox.append(this.progress);
 		this.bottomBox.append(this.progressBox);

@@ -71,6 +71,6 @@ const setup = () => {
 		new AudioGroup(audioChildren, controller as HTMLAudioElement, group as HTMLElement);
 	}
 
-	console.log(`Rucksack: Watching ${mediaElements.list.length} tracks`);
+	console.info(`Rucksack: Watching ${mediaElements.list.length} tracks`);
 };
 addEventListener("load", setup);

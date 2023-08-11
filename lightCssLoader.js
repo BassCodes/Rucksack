@@ -5,7 +5,7 @@
 function addStyleToDocument(value) {
 	const stylesheet = document.createElement("style");
 	stylesheet.textContent = value;
-	document.head.appendChild(stylesheet);
+	document.head.append(stylesheet);
 }
 
 function loader(data) {

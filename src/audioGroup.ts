@@ -1,6 +1,6 @@
 import * as Icons from "./icons";
 import { AudioContainer, getTrackName } from "./audioContainer";
-import { formatDuration, newDiv } from "./util";
+import { formatDuration, newElement } from "./util";
 
 export class AudioGroup extends AudioContainer {
 	previousTrackButton: HTMLButtonElement;
@@ -15,13 +15,15 @@ export class AudioGroup extends AudioContainer {
 
 		this.previousTrackButton = document.createElement("button");
 		this.nextTrackButton = document.createElement("button");
-		this.previousTrackButton.appendChild(Icons.previousTrack());
-		this.nextTrackButton.appendChild(Icons.nextTrack());
+		this.previousTrackButton.append(Icons.previousTrack());
+		this.nextTrackButton.append(Icons.nextTrack());
 		this.nextTrackButton.onclick = this.nextTrack.bind(this);
 		this.previousTrackButton.onclick = this.prevTrack.bind(this);
-		this.previousTrackButton.setAttribute("inert", "true");
 		this.nextTrackButton.ariaLabel = "Next track";
 		this.previousTrackButton.ariaLabel = "Previous track";
+		this.previousTrackButton.setAttribute("inert", "true");
+		// Though it would pointless compared to a `singleTrack`, an `audioGroup` with one track can be created.
+		// In this case, the next track button would never work, thus it is made inert.
 		if (this.tracks.length === 1) {
 			this.nextTrackButton.setAttribute("inert", "true");
 		}
@@ -32,22 +34,20 @@ export class AudioGroup extends AudioContainer {
 
 		this.bottomBox.append(this.previousTrackButton, this.nextTrackButton);
 
+		group.role = "list";
+
 		for (const [i, track] of this.tracks.entries()) {
-			const [audioCard, title, duration, trackNumber] = newDiv(
-				"RSCcard",
-				"",
-				"RSCtimer",
-				"RSCord"
-			);
-			const button = document.createElement("button") as HTMLButtonElement;
+			const [audioCard] = newElement("div", "RSCcard");
+			const [title, duration, trackNumber] = newElement("span", "", "RSCtimer", "RSCord");
 
 			audioCard.id = "RSCcard";
+			audioCard.role = "listitem";
 
+			const button = document.createElement("button");
 			button.classList.add("RSCbutton", "RSCsmallButton", "RSCplaypause");
 			button.ariaLabel = "Play/Pause";
-			button.tabIndex = 0;
-
 			button.append(Icons.playButton());
+
 			title.textContent = getTrackName(track);
 
 			trackNumber.textContent = `${i + 1}.`;
@@ -116,6 +116,8 @@ export class AudioGroup extends AudioContainer {
 		}
 	}
 
+	// The switchTrack method of the audioContainer parent class does not take into consideration the next/previous track buttons added by this class.
+	// This proxy is used to intercept calls to switchTrack to make the next/previous track buttons unusable while there is no next or previous track respectively.
 	switchTrackProxy(track: HTMLAudioElement) {
 		if (this.isFirstTrack()) {
 			this.previousTrackButton.setAttribute("inert", "true");
@@ -123,10 +125,8 @@ export class AudioGroup extends AudioContainer {
 			this.previousTrackButton.removeAttribute("inert");
 		}
 		if (this.isLastTrack()) {
-			console.log("adding inert");
 			this.nextTrackButton.setAttribute("inert", "true");
 		} else {
-			console.log("removing inert");
 			this.nextTrackButton.removeAttribute("inert");
 		}
 		this.switchTrack(track);
