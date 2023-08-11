@@ -1,45 +1,47 @@
-.RSCcontainer {
+#RSCcontainer,
+#audioControls {
 	align-items: center;
 	padding: 10px;
 }
-
 .audioGroup audio {
 	margin-inline-start: 20px;
 }
 
-.RSCcontainer,
+#RSCcontainer,
 #RSCcard {
 	font-family: "nimbus sans", sans-serif;
 	display: flex;
 	column-gap: 9px;
 }
-#RSCbottom {
-	display: flex;
-	column-gap: 9px;
-	align-items: center;
-}
 
-#RSCbottom svg {
-	height: 15px;
+.RSCbutton {
+	display: flex;
+	background-color: transparent;
+	border: 0;
 	width: auto;
 	cursor: pointer;
-}
-
-#RSCbutton,
-#RSCbuttonSmall {
 	box-sizing: content-box;
+	padding: 0;
+}
+.RSCskipbutton[inert] {
+	opacity: 0.6;
 }
 
-#RSCbutton {
-	width: 20px;
-	height: 20px;
-	padding: 10px;
+.RSCplaypause {
 	border: 1px solid gray;
 }
 
-#RSCbutton:hover,
-#RSCbuttonSmall:hover {
-	cursor: pointer;
+.RSCskipbutton svg {
+	height: 15px;
+}
+
+.RSCplaypause:hover {
+	background-color: rgba(208, 208, 215, 0.3);
+}
+
+.RSCbigButton {
+	padding: 10px;
+	height: 20px;
 }
 #RSCcard {
 	font-size: 0.9rem;
@@ -47,14 +49,15 @@
 	padding-inline: 10px;
 	align-items: center;
 }
-
-#RSCbuttonSmall {
-	display: flex;
-	width: 11px;
+.RSCsmallButton {
 	height: 11px;
-	border: 1px solid gray;
 	padding: 5px;
 }
+.RSCsmallButton svg {
+	width: 11px;
+	height: 11px;
+}
+
 #RSCord,
 #RSCtimer {
 	color: gray;
@@ -65,7 +68,6 @@
 	font-size: 0.8em;
 	line-height: 1.6em;
 }
-
 #RSCright {
 	flex-direction: column;
 	justify-content: space-between;
@@ -73,22 +75,25 @@
 }
 #RSCprogress {
 	max-width: 100%;
-	width: 0%;
+	width: 0;
 	height: 100%;
 	background-color: gray;
 }
-
 #RSCprogressBox {
 	width: 100%;
-	min-width: 300px;
-	background-color: lightgray;
+	min-width: min(300px, 40dvw);
+	background-color: #d3d3d3;
 	height: 10px;
 	border: 1px solid gray;
 }
-
 #RSCtop {
 	display: flex;
-	justify-content: space-between;
 	column-gap: 10px;
+	justify-content: space-between;
 	flex-wrap: wrap;
+}
+#RSCbottom {
+	display: flex;
+	column-gap: 9px;
+	align-items: center;
 }
