@@ -1,6 +1,7 @@
-// Created to reduce large quantities of `document.createElement("div")` calls.
-// The intended use of this method is:
-// const [first, second, third] = newElement("div", "idOfFirst", "idOfSecond", "idOfThird");
+/** Create dom elements of type `elementName`. Each further parameter will be the id of an element returned from the function
+ Created to reduce large quantities of `document.createElement("div")` calls.
+ const [first, second, third] = newElement("div", "idOfFirst", "idOfSecond", "idOfThird");
+**/
 export const newElement = (
 	elementName: string,
 	...elementIdList: Array<string>

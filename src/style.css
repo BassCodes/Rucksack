@@ -7,6 +7,11 @@
 	margin-inline-start: 20px;
 }
 
+.audioGroup {
+	padding: 0px;
+	margin-block: 0px;
+}
+
 #RSCcontainer,
 #RSCcard {
 	font-family: "nimbus sans", sans-serif;
@@ -80,6 +85,7 @@
 	background-color: gray;
 }
 #RSCprogressBox {
+	cursor: pointer;
 	width: 100%;
 	min-width: min(300px, 40dvw);
 	background-color: #d3d3d3;

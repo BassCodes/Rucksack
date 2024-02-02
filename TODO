@@ -1,0 +1,11 @@
+Use time element for duration
+
+Use input range for range
+
+Fix bug when playing from group item: fast forward/reverse control intert-ness is wonky
+
+Fix indentation and look of thing. Probably with CSS grid.
+
+Fix media pause/unpause button not updating main icon
+
+Ensure media keys only apply to a currently playing audio player

@@ -13,7 +13,7 @@ import { mediaElements } from "./audioContainer";
 
 // Hide audio elements before the document is rendered
 const hideAllAudioElements = () => {
-	const groups = document.querySelectorAll("div.audioGroup");
+	const groups = document.querySelectorAll("ol.audioGroup");
 	for (const group of groups) {
 		for (const child of group.children) {
 			(child as HTMLElement).style.display = "none";
@@ -32,7 +32,7 @@ const setup = () => {
 
 	// Get all audio elements with controls which are not part of a group
 	const nonGroupedAudioElements = document.querySelectorAll(
-		"audio[controls]:not(div.audioGroup audio)"
+		"audio[controls]:not(ol.audioGroup audio)"
 	);
 
 	for (const track of nonGroupedAudioElements) {
@@ -41,10 +41,10 @@ const setup = () => {
 	}
 
 	const controllers = document.querySelectorAll("div.audioControls");
-	const groups = Array.from(document.querySelectorAll("div.audioGroup"));
+	const groups = Array.from(document.querySelectorAll("ol.audioGroup"));
 
 	// For each controller (<div class="audioControls" for="2022"></div>),
-	// find the respective Group (<div class="audioGroup" name="2022">)
+	// find the respective Group (<ol class="audioGroup" name="2022">)
 	// Once group, controller, and audio elements have been found, create an AudioGroup
 	for (const controller of controllers) {
 		const groupName = controller.getAttribute("for");

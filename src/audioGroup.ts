@@ -1,6 +1,6 @@
 import * as Icons from "./icons";
 import { AudioContainer, getTrackName } from "./audioContainer";
-import { formatDuration, newElement } from "./util";
+import { newElement, formatDuration } from "./util";
 
 export class AudioGroup extends AudioContainer {
 	previousTrackButton: HTMLButtonElement;
@@ -37,7 +37,7 @@ export class AudioGroup extends AudioContainer {
 		group.role = "list";
 
 		for (const [i, track] of this.tracks.entries()) {
-			const [audioCard] = newElement("div", "RSCcard");
+			const [audioCard] = newElement("li", "RSCcard");
 			const [title, duration, trackNumber] = newElement("span", "", "RSCtimer", "RSCord");
 
 			audioCard.id = "RSCcard";
@@ -112,6 +112,14 @@ export class AudioGroup extends AudioContainer {
 
 			track.addEventListener("timeupdate", () => {
 				this.updateDuration();
+			});
+
+			// Support for media keys
+			navigator.mediaSession.setActionHandler("previoustrack", () => {
+				this.prevTrack();
+			});
+			navigator.mediaSession.setActionHandler("nexttrack", () => {
+				this.nextTrack();
 			});
 		}
 	}
