@@ -35,3 +35,7 @@ export const previousTrack = (): SVGElement =>
 	svgFromText(
 		`${svgPre}polygon points="1,0.1 1,0.9 0.5,0.5 0.5,0.9 0,0.5 0.5,0.1 0.5,0.5"${svgPost}`
 	);
+export const errorButton = (): SVGElement =>
+	svgFromText(
+		`${svgPre}polygon points="1,0.1 1,0.9 0.5,0.5 0.5,0.9 0,0.5 0.5,0.1 0.5,0.5"${svgPost}`
+	);

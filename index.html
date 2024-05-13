@@ -8,75 +8,21 @@
 		<script src="dist/rucksack.js"></script>
 	</head>
 	<body>
-		<audio src="media/example1.mp3" title="Song Title #1" controls></audio>
-		<div class="audioControls" for="2023"></div>
-		<ol class="audioGroup" name="2023">
-			<li>
-				Song #2
-				<audio src="media/example1.mp3" title="Song #2" controls></audio>
-			</li>
-			<li>
-				Blues #3
-				<audio src="media/example2.mp3" title="Blues #3" controls></audio>
-			</li>
-			<li>
-				Sonata #17
-				<audio src="media/example1.mp3" title="Sonata #17" controls></audio>
-			</li>
-		</ol>
+		<!-- NEW STYLE -->
+		<figure data-rsc>
+			<figcaption>Song 1</figcaption>
+			<audio controls src="media/example1.mp3"></audio>
+		</figure>
 
-		<div class="audioControls" for="2022"></div>
-		<ol class="audioGroup" name="2022">
-			<div>
-				Experiment 27<audio
-					src="1_experiment_27.mp3"
-					title="Experiment 27"
-					controls
-				></audio>
-			</div>
-			<div>
-				Experiment 28<audio
-					src="2_experiment_28.mp3"
-					title="Experiment 28"
-					controls
-				></audio>
-			</div>
-			<div>
-				Flintstone<audio src="3_flintstone.mp3" title="Flintstone" controls></audio>
-			</div>
-			<div>
-				Experiment 1<audio src="4_experiment_1.mp3" title="Experiment 1" controls></audio>
-			</div>
-			<div>
-				Experiment 4<audio src="5_experiment_4.mp3" title="Experiment 4" controls></audio>
-			</div>
-			<div>
-				Experiment 17.1<audio
-					src="6_experiment_17_1.mp3"
-					title="Experiment 17.1"
-					controls
-				></audio>
-			</div>
-			<div>
-				Experiment 3<audio src="7_experiment_3.mp3" title="Experiment 3" controls></audio>
-			</div>
-			<div>
-				Experiment 4.1<audio
-					src="8_experiment_4_1.mp3"
-					title="Experiment 4.1"
-					controls
-				></audio>
-			</div>
-			<div>
-				Experiment 2<audio src="9_experiment_2.mp3" title="Experiment 2" controls></audio>
-			</div>
-			<div>
-				Experiment 8.2<audio
-					src="10_experiment_8_2.mp3"
-					title="Experiment 8.2"
-					controls
-				></audio>
-			</div>
+		<ol data-rsc>
+			<li>
+				Title 1
+				<audio controls src="media/example1.mp3"></audio>
+			</li>
+			<li>
+				Title 2
+				<audio controls src="media/example2.mp3"></audio>
+			</li>
 		</ol>
 	</body>
 </html>

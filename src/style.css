@@ -1,4 +1,4 @@
-#RSCcontainer,
+#RSCui,
 #audioControls {
 	align-items: center;
 	padding: 10px;
@@ -12,7 +12,26 @@
 	margin-block: 0px;
 }
 
-#RSCcontainer,
+.audioGroup .errored {
+	cursor: not-allowed;
+}
+
+#RSCcard {
+	display: table-row !important;
+
+	font-size: 0.9rem;
+}
+#RSCcard > * {
+	display: table-cell !important;
+}
+
+.audioGroup {
+	border-collapse: collapse;
+	border-spacing: 1.6em 2px;
+	margin-inline: 10px;
+	display: table;
+}
+#RSCui,
 #RSCcard {
 	font-family: "nimbus sans", sans-serif;
 	display: flex;
@@ -28,6 +47,7 @@
 	box-sizing: content-box;
 	padding: 0;
 }
+
 .RSCskipbutton[inert] {
 	opacity: 0.6;
 }
@@ -48,12 +68,7 @@
 	padding: 10px;
 	height: 20px;
 }
-#RSCcard {
-	font-size: 0.9rem;
-	margin-block: 5px;
-	padding-inline: 10px;
-	align-items: center;
-}
+
 .RSCsmallButton {
 	height: 11px;
 	padding: 5px;
@@ -67,6 +82,9 @@
 #RSCtimer {
 	color: gray;
 	user-select: none;
+}
+#RSCord {
+	text-align: center;
 }
 
 #RSCtimer {

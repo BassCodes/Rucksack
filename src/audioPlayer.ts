@@ -1,49 +1,48 @@
 import { formatDuration, newElement } from "./util";
 import * as Icons from "./icons";
+import { TrackStatus } from "./audioTrack";
 
 export const getTrackName = (track: HTMLAudioElement): string =>
 	track.getAttribute("title") ?? track.src.split("/").reverse()[0] ?? "";
 
-// ugly workaround to get a global variable usable across all modules
-export let mediaElements: { list: Array<HTMLMediaElement> } = { list: [] };
+export abstract class AudioPlayer {
+	protected activeTrack: HTMLAudioElement;
+	protected activeNo: number;
+	protected activeTrackStatus: TrackStatus;
+	protected activeTitle: HTMLElement;
+	protected tracks: Array<HTMLAudioElement>;
 
-function stopAllMedia() {
-	mediaElements.list.forEach((el) => {
-		el.pause();
-	});
-}
-
-export abstract class AudioContainer {
-	activeTrack: HTMLAudioElement;
-	activeNo: number;
-	activeTitle: HTMLElement;
-
-	tracks: Array<HTMLAudioElement>;
-
-	container: HTMLElement;
-	button: HTMLElement;
-	timer: HTMLElement;
-	progressBox: HTMLElement;
-	progress: HTMLElement;
-	bottomBox: HTMLElement;
+	// UI Elements
+	// Container for all UI elements
+	UI: HTMLElement;
+	// Big play/pause button
+	private button: HTMLElement;
+	// Time Elapsed out of total time
+	private timer: HTMLElement;
+	// Contains progress bar and whatever implementations want to add (Next/Prev buttons)
+	protected bottomBox: HTMLElement;
+	// A progress bar container
+	private progressBox: HTMLElement;
+	// Actual current progress
+	private progressBar: HTMLElement;
 
 	constructor(tracks: Array<HTMLAudioElement>) {
 		this.activeNo = 0;
 		this.tracks = tracks;
-		this.activeTrack = this.tracks[0];
-
+		this.activeTrack = tracks[0];
+		this.activeTrackStatus = TrackStatus.Paused;
 		this.tracks.forEach((t) => t.setAttribute("preload", "metadata"));
 
 		[
-			this.container,
+			this.UI,
 			this.timer,
 			this.progressBox,
-			this.progress,
+			this.progressBar,
 			this.activeTitle,
 			this.bottomBox,
 		] = newElement(
 			"div",
-			"RSCcontainer",
+			"RSCui",
 			"RSCtimer",
 			"RSCprogressBox",
 			"RSCprogress",
@@ -56,15 +55,16 @@ export abstract class AudioContainer {
 		this.button.ariaLabel = "Play/Pause";
 		this.button.classList.add("RSCbutton", "RSCbigButton", "RSCplaypause");
 
-		this.progressBox.append(this.progress);
+		this.progressBox.append(this.progressBar);
 		this.bottomBox.append(this.progressBox);
-		this.switchTrack(this.tracks[0]);
-		this.stop();
+
+		this.activeTitle.textContent = getTrackName(this.activeTrack);
+		this.button.replaceChildren(Icons.playButton());
 		this.updateDuration();
 
 		top.append(this.activeTitle);
 		rightBox.append(top, this.bottomBox);
-		this.container.append(this.button, rightBox);
+		this.UI.append(this.button, rightBox);
 
 		// Only display length of track once it is loaded
 		if (this.activeTrack.duration !== undefined) {
@@ -105,41 +105,101 @@ export abstract class AudioContainer {
 		});
 	}
 
-	switchTrack(track: HTMLAudioElement) {
-		if (this.activeTrack !== undefined) {
-			this.activeTrack.pause();
-			this.activeTrack.currentTime = 0;
-		}
+	protected switchTrack(track: HTMLAudioElement) {
+		this.activeTrack.pause();
+		this.activeTrack.currentTime = 0;
 		this.activeTrack = track;
 		this.activeTitle.textContent = getTrackName(this.activeTrack);
 	}
 
-	quickSeek(percentage: number) {
+	nextTrack() {
+		if (this.activeNo < this.tracks.length - 1) {
+			const nextTrack = this.tracks[this.activeNo + 1];
+			this.activeNo += 1;
+			this.switchTrack(nextTrack);
+			this.play();
+		}
+	}
+	prevTrack() {
+		if (this.activeNo > 0) {
+			const prevTrack = this.tracks[this.activeNo - 1];
+			this.activeNo -= 1;
+			this.switchTrack(prevTrack);
+			this.play();
+		}
+	}
+	isLastTrack(): boolean {
+		return this.activeNo >= this.tracks.length - 1;
+	}
+	isFirstTrack(): boolean {
+		return this.activeNo === 0;
+	}
+
+	isPlaying(): boolean {
+		return !this.activeTrack.paused;
+	}
+
+	isPaused(): boolean {
+		return this.activeTrack.paused;
+	}
+
+	private quickSeek(percentage: number) {
 		this.activeTrack.fastSeek((this.activeTrack.duration || 0) * percentage);
 	}
 
-	updateDuration() {
+	protected updateDuration() {
 		const totalDuration = formatDuration(this.activeTrack.duration);
 		const currentTime = formatDuration(this.activeTrack.currentTime);
 		this.timer.textContent = `${currentTime} / ${totalDuration}`;
-		this.progress.style.width = `${
+		this.progressBar.style.width = `${
 			100 * (this.activeTrack.currentTime / this.activeTrack.duration || 0)
 		}%`;
 	}
-	togglePlaying() {
-		if (this.activeTrack.paused) {
-			this.start();
+
+	protected setButtonIcon(icon: SVGElement) {
+		this.button.replaceChildren(icon);
+	}
+
+	protected togglePlaying() {
+		if (this.isPaused()) {
+			this.play();
 		} else {
-			this.stop();
+			this.pause();
 		}
 	}
-	start() {
-		stopAllMedia();
-		this.button.replaceChildren(Icons.pauseButton());
-		this.activeTrack.play();
+	play() {
+		this.UI.dispatchEvent(new Event("RSCaudioStart"));
+		const promise = this.activeTrack.play();
+		if (promise === undefined) return;
+		promise
+			.then(() => {
+				this.setStatus(TrackStatus.Playing);
+			})
+			.catch((e) => {
+				this.setStatus(TrackStatus.Errored);
+				if (!this.isLastTrack()) {
+					this.nextTrack();
+				}
+				console.log(e);
+				console.log(this.activeTrack.error);
+			});
+	}
+	pause() {
+		this.activeTrack.pause();
+		this.setStatus(TrackStatus.Paused);
 	}
 	stop() {
-		this.button.replaceChildren(Icons.playButton());
+		this.setStatus(TrackStatus.Paused);
 		this.activeTrack.pause();
+	}
+	setStatus(s: TrackStatus) {
+		if (s == TrackStatus.Playing) {
+			this.setButtonIcon(Icons.pauseButton());
+		} else if (s == TrackStatus.Errored) {
+			this.setButtonIcon(Icons.errorButton());
+		} else if (s == TrackStatus.Paused) {
+			this.setButtonIcon(Icons.playButton());
+		}
+		this.activeTrackStatus = s;
 	}
 }
