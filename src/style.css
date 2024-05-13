@@ -1,37 +1,31 @@
-#RSCui,
-#audioControls {
+#RSCui {
 	align-items: center;
-	padding: 10px;
+	gap: 9px;
+	padding: 9px;
 }
-.audioGroup audio {
-	margin-inline-start: 20px;
-}
-.audioGroup {
-	padding: 0px;
-	margin-block: 0px;
-}
-.audioGroup .errored {
-	cursor: not-allowed;
-}
+
 #RSCcard {
+	display: flex;
 	font-size: 0.9rem;
-	display: flex;
-	column-gap: 9px;
-	margin-block: 5px;
+	gap: 9px;
+	margin: 5px 0px;
 	align-items: center;
 }
 .audioGroup {
-	margin-inline: 10px;
+	margin: 0px 10px;
+	padding: 0px;
+	.errored {
+		cursor: not-allowed;
+	}
 }
 #RSCui,
 #RSCcard {
-	font-family: "nimbus sans", sans-serif;
 	display: flex;
-	column-gap: 9px;
+	font-family: "nimbus sans", sans-serif;
 }
 .RSCbutton {
 	display: flex;
-	background-color: transparent;
+	background: rgba(0, 0, 0, 0);
 	border: 0;
 	width: auto;
 	cursor: pointer;
@@ -48,7 +42,7 @@
 	height: 15px;
 }
 .RSCplaypause:hover {
-	background-color: rgba(208, 208, 215, 0.3);
+	background: rgba(208, 208, 215, 0.3);
 }
 .RSCbigButton {
 	padding: 10px;
@@ -69,7 +63,7 @@
 }
 #RSCtimer {
 	font-size: 0.8em;
-	line-height: 1.6em;
+	line-height: 1.6;
 }
 #RSCright {
 	flex-direction: column;
@@ -77,16 +71,16 @@
 	row-gap: 3px;
 }
 #RSCprogress {
-	max-width: 100%;
 	width: 0;
+	max-width: 100%;
 	height: 100%;
-	background-color: gray;
+	background: gray;
 }
 #RSCprogressBox {
 	cursor: pointer;
 	width: 100%;
 	min-width: min(300px, 40dvw);
-	background-color: #d3d3d3;
+	background: #d3d3d3;
 	height: 10px;
 	border: 1px solid gray;
 }
