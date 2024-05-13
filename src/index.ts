@@ -14,11 +14,11 @@ import "./style.css";
 import { Orchestrator } from "./orchestrator";
 import { getMultiPlayers, getSinglePlayers } from "./injector";
 
-const setup = () => {
-	const orc = new Orchestrator();
+const setup = (): void => {
+	let orc = new Orchestrator();
 
-	const single = getSinglePlayers();
-	const multi = getMultiPlayers();
+	let single = getSinglePlayers();
+	let multi = getMultiPlayers();
 	single.forEach((p) => {
 		orc.addPlayer(p);
 	});

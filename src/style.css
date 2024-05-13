@@ -6,30 +6,22 @@
 .audioGroup audio {
 	margin-inline-start: 20px;
 }
-
 .audioGroup {
 	padding: 0px;
 	margin-block: 0px;
 }
-
 .audioGroup .errored {
 	cursor: not-allowed;
 }
-
 #RSCcard {
-	display: table-row !important;
-
 	font-size: 0.9rem;
+	display: flex;
+	column-gap: 9px;
+	margin-block: 5px;
+	align-items: center;
 }
-#RSCcard > * {
-	display: table-cell !important;
-}
-
 .audioGroup {
-	border-collapse: collapse;
-	border-spacing: 1.6em 2px;
 	margin-inline: 10px;
-	display: table;
 }
 #RSCui,
 #RSCcard {
@@ -37,7 +29,6 @@
 	display: flex;
 	column-gap: 9px;
 }
-
 .RSCbutton {
 	display: flex;
 	background-color: transparent;
@@ -47,28 +38,22 @@
 	box-sizing: content-box;
 	padding: 0;
 }
-
 .RSCskipbutton[inert] {
 	opacity: 0.6;
 }
-
 .RSCplaypause {
 	border: 1px solid gray;
 }
-
 .RSCskipbutton svg {
 	height: 15px;
 }
-
 .RSCplaypause:hover {
 	background-color: rgba(208, 208, 215, 0.3);
 }
-
 .RSCbigButton {
 	padding: 10px;
 	height: 20px;
 }
-
 .RSCsmallButton {
 	height: 11px;
 	padding: 5px;
@@ -77,16 +62,11 @@
 	width: 11px;
 	height: 11px;
 }
-
 #RSCord,
 #RSCtimer {
 	color: gray;
 	user-select: none;
 }
-#RSCord {
-	text-align: center;
-}
-
 #RSCtimer {
 	font-size: 0.8em;
 	line-height: 1.6em;

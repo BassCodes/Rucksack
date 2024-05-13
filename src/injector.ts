@@ -2,48 +2,26 @@
 // created  : 2024-5-12
 // modified : 2024-5-12
 
+import { AudioPlayer, AudioTrack } from "./audioPlayer";
 import { MultiTrack } from "./multiTrackPlayer";
-import { SingleTrack } from "./singleTrackPlayer";
+import { $ } from "./util";
 
 // Finds candidate audio containers and collections their audio elements.
 // Creates Rucksack players and injects them into the document.
 
-export function getSinglePlayers(): Array<SingleTrack> {
-	const containers = Array.from(document.querySelectorAll("figure[data-rsc]"));
-	let players = [];
-
-	for (const container of containers) {
-		const data = extractSingleData(container);
-		if (data === undefined) {
-			continue;
-		}
-		const { audio, title } = data;
-
-		const player = new SingleTrack(audio);
-
-		container.replaceWith(player.UI);
-		players.push(player);
-	}
-	return players;
-}
-
-function extractSingleData(container: Element):
-	| {
-			audio: HTMLAudioElement;
-			title: string;
-	  }
-	| undefined {
-	const title = container.textContent?.trim();
-	if (title === undefined || title.length === 0) {
+export let extractSingleData = (container: Element): AudioTrack | undefined => {
+	let title = container.textContent?.trim();
+	if (!title || title.length == 0) {
 		console.error("RSC: audio title empty");
 		return;
 	}
 
-	const audios = Array.from(container.querySelectorAll("audio[controls]"));
+	let audios = $(container, "audio[controls]");
+
 	if (audios.length > 1) {
 		console.error(`RSC: audio with title ${title} has too many audio tags.`);
 		return;
-	} else if (audios.length === 0) {
+	} else if (audios.length == 0) {
 		console.error(
 			`RSC: audio with title ${title} has no audio tag with 'controls' attribute`
 		);
@@ -52,43 +30,34 @@ function extractSingleData(container: Element):
 
 	// Type cast to HTMLAudioElement is assumed to be safe as the above
 	// querySelectorAll specifically looks for audio elements.
-	const audio = audios[0] as HTMLAudioElement;
-	return { audio, title };
-}
+	let a = audios[0] as HTMLAudioElement;
+	return { a, title };
+};
 
-export function getMultiPlayers(): Array<MultiTrack> {
+export let getSinglePlayers = (): Array<AudioPlayer> => {
 	let players = [];
 
-	const containers = Array.from(document.querySelectorAll("ol[data-rsc]"));
-	for (const container of containers) {
-		const data = extractMultiData(container);
-		if (data === undefined) {
-			continue;
-		}
-		const audios = data.map((d) => d.audio);
-		const player = new MultiTrack(audios);
-		container.insertAdjacentElement("afterend", player.trackListElement);
-		container.replaceWith(player.UI);
-		players.push(player);
-	}
+	for (let container of $(document, "figure[data-rsc]")) {
+		let track = extractSingleData(container);
+		if (track) {
+			let player = new AudioPlayer([track]);
 
+			container.replaceWith(player.UI);
+			players.push(player);
+		}
+	}
 	return players;
-}
+};
 
-function extractMultiData(container: Element): Array<{
-	audio: HTMLAudioElement;
-	title: string;
-}> {
-	const title = container.textContent?.trim();
-	let tracks = [];
-	const items = Array.from(container.querySelectorAll("li"));
-	for (const i of items) {
-		const data = extractSingleData(i);
-		if (data === undefined) {
-			continue;
-		}
-		tracks.push(data);
-	}
-
-	return tracks;
-}
+export let getMultiPlayers = (): Array<MultiTrack> => {
+	return $(document, "ol[data-rsc]").map((container) => {
+		let p = new MultiTrack(
+			$(container, "li")
+				.map(extractSingleData)
+				.filter((t) => t) as Array<AudioTrack>
+		);
+		container.insertAdjacentElement("afterend", p.trackListElement);
+		container.replaceWith(p.UI);
+		return p;
+	});
+};

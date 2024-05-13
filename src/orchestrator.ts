@@ -1,36 +1,42 @@
-import { AudioPlayer } from "./audioPlayer";
+// authors  : Alexander Bass
+// created  : 2024
+// modified : 2024-5-12
+
+import { AudioPlayer, AudioPlayerI } from "./audioPlayer";
 
 export class Orchestrator {
-	players: Array<AudioPlayer>;
-	activePlayer: null | AudioPlayer;
+	players: Array<AudioPlayerI>;
+	activePlayer: null | AudioPlayerI;
 	constructor() {
 		this.players = [];
 		this.activePlayer = null;
 
-		navigator.mediaSession.setActionHandler("previoustrack", () => {
-			this.activePlayer?.prevTrack();
+		let session = navigator.mediaSession;
+
+		session.setActionHandler("previoustrack", () => {
+			this.activePlayer?.prev();
 		});
-		navigator.mediaSession.setActionHandler("nexttrack", () => {
-			this.activePlayer?.nextTrack();
+		session.setActionHandler("nexttrack", () => {
+			this.activePlayer?.next();
 		});
-		navigator.mediaSession.setActionHandler("pause", () => {
+		session.setActionHandler("pause", () => {
 			this.activePlayer?.pause();
 		});
-		navigator.mediaSession.setActionHandler("play", (e) => {
+		session.setActionHandler("play", () => {
 			this.activePlayer?.play();
 		});
-		navigator.mediaSession.setActionHandler("stop", () => {
+		session.setActionHandler("stop", () => {
 			this.activePlayer?.stop();
 		});
 	}
 
-	addPlayer(player: AudioPlayer) {
+	addPlayer(player: AudioPlayer): void {
 		this.players.push(player);
 		player.UI.addEventListener("RSCaudioStart", () => {
 			this.setActivePlayer(player);
 		});
 	}
-	setActivePlayer(p: AudioPlayer) {
+	setActivePlayer(p: AudioPlayer): void {
 		this.activePlayer = p;
 		for (const player of this.players) {
 			if (p == player) continue;

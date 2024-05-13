@@ -1,0 +1,63 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "indent": [
+            "warn",
+            "tab",
+            {"SwitchCase": 1}
+        ],
+        "linebreak-style": [
+            "warn",
+            "unix"
+        ],
+        "quotes": [
+            "warn",
+            "double"
+        ],
+        "semi": [
+            "warn",
+            "always"
+        ],
+        "space-before-blocks":["warn","always"],
+        "quote-props" : ["warn","as-needed"],
+        "dot-notation":"warn",
+        "one-var":["warn","never"],
+        "no-use-before-define":"warn",
+        "no-multi-assign":"warn",
+        "no-else-return":"warn",
+        "spaced-comment":"warn",
+        "no-restricted-globals":"warn",
+        "prefer-template":"warn",
+        "class-methods-use-this":"warn",
+        "template-curly-spacing": ["warn", "never"],
+        "no-useless-rename":"warn",
+        "no-useless-escape":"warn",
+        "no-duplicate-imports":"warn",
+        "no-useless-constructor":"warn",
+        "no-loop-func":"warn",
+        "no-param-reassign":"warn",
+        "prefer-arrow-callback":"warn",
+        "no-array-constructor": "warn",
+        "no-empty": "off",
+        "prefer-const": "off",
+        "no-self-compare": "warn",
+        "eqeqeq": "off",
+        "@typescript-eslint/no-unused-vars": "warn",
+        "@typescript-eslint/explicit-function-return-type": "warn"
+    }
+}
