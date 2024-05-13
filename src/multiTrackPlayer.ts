@@ -19,7 +19,7 @@ export class MultiTrack extends AudioPlayer {
 		this.previousTrackButton.append(Icons.previousTrack());
 		this.previousTrackButton.onclick = this.prev.bind(this);
 		this.previousTrackButton.ariaLabel = "Previous track";
-		this.previousTrackButton.setAttribute("inert", "true");
+		this.previousTrackButton.setAttribute("inert", "");
 
 		this.nextTrackButton = N("button");
 		this.nextTrackButton.append(Icons.nextTrack());
@@ -29,7 +29,7 @@ export class MultiTrack extends AudioPlayer {
 		// In this case, the next track button would never work, thus it is made inert.
 
 		if (this.tracks.length == 1) {
-			this.nextTrackButton.setAttribute("inert", "true");
+			this.nextTrackButton.setAttribute("inert", "");
 		}
 
 		[this.previousTrackButton, this.nextTrackButton].forEach((b) =>
@@ -37,8 +37,6 @@ export class MultiTrack extends AudioPlayer {
 		);
 
 		this.bottomBox.append(this.previousTrackButton, this.nextTrackButton);
-
-		this.trackListElement.role = "list";
 
 		for (const [i, track] of this.tracks.entries()) {
 			let trackCard = this.setupTrackCard(i, track);
@@ -82,7 +80,7 @@ export class MultiTrack extends AudioPlayer {
 
 		audioMetadataLoad(track.a, addDurationToCard);
 
-		if (track.a.error != undefined) {
+		if (track.a.error) {
 			button.classList.add("errored");
 			button.replaceChildren(Icons.errorButton());
 			duration.textContent = "track could not be loaded";
@@ -129,12 +127,12 @@ export class MultiTrack extends AudioPlayer {
 	switchTrack(trackno: number): void {
 		super.switchTrack(trackno);
 		if (this.isFirstTrack()) {
-			this?.previousTrackButton?.setAttribute("inert", "true");
+			this?.previousTrackButton?.setAttribute("inert", "");
 		} else {
 			this?.previousTrackButton?.removeAttribute("inert");
 		}
 		if (this.isLastTrack()) {
-			this?.nextTrackButton?.setAttribute("inert", "true");
+			this?.nextTrackButton?.setAttribute("inert", "");
 		} else {
 			this?.nextTrackButton?.removeAttribute("inert");
 		}

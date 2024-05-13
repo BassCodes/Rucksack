@@ -10,31 +10,49 @@ export class Orchestrator {
 	constructor() {
 		this.players = [];
 		this.activePlayer = null;
-
-		let session = navigator.mediaSession;
-
-		session.setActionHandler("previoustrack", () => {
-			this.activePlayer?.prev();
-		});
-		session.setActionHandler("nexttrack", () => {
-			this.activePlayer?.next();
-		});
-		session.setActionHandler("pause", () => {
-			this.activePlayer?.pause();
-		});
-		session.setActionHandler("play", () => {
-			this.activePlayer?.play();
-		});
-		session.setActionHandler("stop", () => {
-			this.activePlayer?.stop();
-		});
+		const handlers = [
+			[
+				"previoustrack",
+				(): void => {
+					this.activePlayer?.prev();
+				},
+			],
+			[
+				"nexttrack",
+				(): void => {
+					this.activePlayer?.next();
+				},
+			],
+			[
+				"pause",
+				(): void => {
+					this.activePlayer?.pause();
+				},
+			],
+			[
+				"play",
+				(): void => {
+					this.activePlayer?.play();
+				},
+			],
+			[
+				"stop",
+				(): void => {
+					this.activePlayer?.stop();
+				},
+			],
+		];
+		for (const [key, val] of handlers) {
+			navigator.mediaSession.setActionHandler(
+				key as MediaSessionAction,
+				val as MediaSessionActionHandler
+			);
+		}
 	}
 
 	addPlayer(player: AudioPlayer): void {
 		this.players.push(player);
-		player.UI.addEventListener("RSCaudioStart", () => {
-			this.setActivePlayer(player);
-		});
+		player.UI.addEventListener("RSCaudioStart", () => {});
 	}
 	setActivePlayer(p: AudioPlayer): void {
 		this.activePlayer = p;

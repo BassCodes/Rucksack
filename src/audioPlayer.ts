@@ -198,10 +198,13 @@ export class AudioPlayer implements AudioPlayerI {
 	}
 
 	setStatus(s: TrackStatus): void {
-		let b;
-		if (s == TrackStatus.Paused) b = Icons.playButton();
-		if (s == TrackStatus.Playing) b = Icons.pauseButton();
-		if (s == TrackStatus.Errored) b = Icons.errorButton();
+		let b =
+			s == TrackStatus.Paused
+				? Icons.playButton()
+				: s == TrackStatus.Playing
+				? Icons.playButton()
+				: Icons.errorButton();
+
 		this.setButtonIcon(b as SVGElement);
 		this.status = s;
 	}
