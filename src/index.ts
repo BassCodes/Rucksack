@@ -1,20 +1,17 @@
 // authors  : Alexander Bass
 // created  : 2023-8-30
-// modified : 2024-5-12
-
-// Rucksack
-//
-// A script which replaces the inconsistent browser <audio controls> implementations with a widget inspired by <https://bandcamp.com>.
-//
-// This script is optimized to be as small as reasonably possible without compromising source readability.
-//
-
-import "./style.css";
+// modified : 2024-5-13
 
 import { Orchestrator } from "./orchestrator";
 import { getMultiPlayers, getSinglePlayers } from "./injector";
+import { N } from "./util";
 
 const setup = (): void => {
+	const stylesheet = N("style");
+	stylesheet.textContent = "TEMPLATE REPLACED IN BUILD";
+	document.head.append(stylesheet);
+
+	// Orchestrator handles media events and ensures only one player can be playing at a time
 	let orc = new Orchestrator();
 
 	let single = getSinglePlayers();
