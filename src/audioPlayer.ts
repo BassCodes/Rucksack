@@ -1,19 +1,18 @@
 // authors  : Alexander Bass
 // created  : 2024
-// modified : 2024-5-12
+// modified : 2024-5-13
 
 import { N, audioMetadataLoad, formatDuration, newElements } from "./util";
 import * as Icons from "./icons";
 
-export enum TrackStatus {
-	Playing,
-	Paused,
-	Errored,
-}
+// Typescript enums automatically include code for formatting them to strings which is unneeded and takes up extra space
+export const STATUS_PLAYING = 0;
+export const STATUS_PAUSED = 1;
+export const STATUS_ERROR = 2;
+
 export interface AudioPlayerI {
 	pause: () => void;
 	play: () => void;
-	stop: () => void;
 	next: () => void;
 	prev: () => void;
 }
@@ -24,33 +23,36 @@ export interface AudioTrack {
 }
 
 export class AudioPlayer implements AudioPlayerI {
-	// Active Track
-	protected at: AudioTrack;
-	protected activeNo: number;
-	protected status: TrackStatus;
-	protected activeTitle: HTMLElement;
-	protected tracks: Array<AudioTrack>;
+	/** Active Track Object */
+	at: AudioTrack;
+	/** Index of active track */
+	activeNo: number;
+	/** Status of active track */
+	status: number;
+	/** List of tracks */
+	readonly tracks: Array<AudioTrack>;
 
 	// UI Elements
-	// Container for all controller UI elements
+	/** Title box containing name of active track */
+	activeTitle: HTMLElement;
+	/** Container for all controller UI elements */
 	UI: HTMLElement;
 	// Big play/pause button
-	private button: HTMLElement;
+	button: HTMLElement;
 	// Time Elapsed out of total time
-	private timer: HTMLElement;
-	// Contains progress bar and whatever implementations want to add (Next/Prev buttons)
-	protected bottomBox: HTMLElement;
+	timer: HTMLElement;
+	/** Contains progress bar and in the multitrack player Next/Prev buttons */
+	bottomBox: HTMLElement;
 	// A progress bar container
-	private progressBox: HTMLElement;
+	progressBox: HTMLElement;
 	// Actual current progress
-	private progressBar: HTMLElement;
+	progressBar: HTMLElement;
 
 	constructor(tracks: Array<AudioTrack>) {
 		this.activeNo = 0;
 		this.tracks = tracks;
-		// active track
 		this.at = tracks[0];
-		this.status = TrackStatus.Paused;
+		this.status = STATUS_PAUSED;
 		this.tracks.forEach((t) => t.a.setAttribute("preload", "metadata"));
 
 		[
@@ -86,24 +88,19 @@ export class AudioPlayer implements AudioPlayerI {
 		this.UI.append(this.button, rightBox);
 
 		top.append(this.timer);
+
 		// Only display length of track once it is loaded
 		audioMetadataLoad(this.at.a, this.updateDuration.bind(this));
 
 		this.button.onclick = this.togglePlaying.bind(this);
 
-		// Seeking is done as a result of the mousemove event after a mousedown event.
-		// When, either the mouse is no longer pressed, or the mouse leaves the progress box,
-		// The seeking must stop. An anonymous arrow function would be ideal as the callback for the
-		// mousemove event, but it is nearly impossible to remove anonymous functions from event listeners.
-		// Thus, the `seek` function has been extracted so that event that calls it can be removed.
-		let seek = (e: MouseEvent): void => {
-			let percentage = e.offsetX / this.progressBox.scrollWidth;
-			this.quickSeek(percentage);
-		};
 		this.progressBox.addEventListener("mousedown", (e) => {
 			let percentage = e.offsetX / this.progressBox.scrollWidth;
 			this.at.a.currentTime = (this.at.a.duration || 0) * percentage;
-			this.progressBox.onmousemove = seek;
+			this.progressBox.onmousemove = (): void => {
+				let percentage = e.offsetX / this.progressBox.scrollWidth;
+				this.quickSeek(percentage);
+			};
 		});
 		this.progressBox.onmouseleave = (): void => {
 			this.progressBox.onmousemove = null;
@@ -114,7 +111,7 @@ export class AudioPlayer implements AudioPlayerI {
 		this.switchTrack(0);
 	}
 
-	protected switchTrack(trackno: number): void {
+	switchTrack(trackno: number): void {
 		this.at.a.pause();
 		this.at.a.currentTime = 0;
 		this.at.a.ontimeupdate = null;
@@ -125,12 +122,14 @@ export class AudioPlayer implements AudioPlayerI {
 		this.activeTitle.textContent = this.at.title;
 		this.activeNo = trackno;
 	}
+
 	next(): void {
 		if (!this.isLastTrack()) {
 			this.switchTrack(this.activeNo + 1);
 			this.play();
 		}
 	}
+
 	prev(): void {
 		if (!this.isFirstTrack()) {
 			this.switchTrack(this.activeNo - 1);
@@ -141,19 +140,16 @@ export class AudioPlayer implements AudioPlayerI {
 	isLastTrack(): boolean {
 		return this.activeNo >= this.tracks.length - 1;
 	}
+
 	isFirstTrack(): boolean {
 		return this.activeNo == 0;
 	}
 
-	isPaused(): boolean {
-		return this.at.a.paused;
-	}
-
-	private quickSeek(percentage: number): void {
+	quickSeek(percentage: number): void {
 		this.at.a.fastSeek((this.at.a.duration || 0) * percentage);
 	}
 
-	protected updateDuration(): void {
+	updateDuration(): void {
 		let totalDuration = formatDuration(this.at.a.duration);
 		let currentTime = formatDuration(this.at.a.currentTime);
 		this.timer.textContent = `${currentTime} / ${totalDuration}`;
@@ -162,50 +158,50 @@ export class AudioPlayer implements AudioPlayerI {
 		}%`;
 	}
 
-	protected setButtonIcon(icon: SVGElement): void {
-		this.button.replaceChildren(icon);
-	}
-
-	protected togglePlaying(): void {
-		if (this.isPaused()) {
+	togglePlaying(): void {
+		if (this.at.a.paused) {
 			this.play();
 		} else {
 			this.pause();
 		}
 	}
+
 	play(): void {
 		this.UI.dispatchEvent(new Event("RSCaudioStart"));
 		let promise = this.at.a.play();
+		// Older browsers might not support the promise
 		if (!promise) return;
 		promise
 			.then(() => {
-				this.setStatus(TrackStatus.Playing);
+				this.setStatus(STATUS_PLAYING);
 			})
 			.catch((e) => {
-				this.setStatus(TrackStatus.Errored);
+				this.setStatus(STATUS_ERROR);
 				if (!this.isLastTrack()) {
 					this.next();
 				}
 				console.log(e, this.at.a.error);
 			});
 	}
+
 	pause(): void {
 		this.at.a.pause();
-		this.setStatus(TrackStatus.Paused);
-	}
-	stop(): void {
-		this.pause();
+		this.setStatus(STATUS_PAUSED);
 	}
 
-	setStatus(s: TrackStatus): void {
-		let b =
-			s == TrackStatus.Paused
-				? Icons.playButton()
-				: s == TrackStatus.Playing
-				? Icons.playButton()
-				: Icons.errorButton();
+	setStatus(s: number): void {
+		let b;
+		if (s === STATUS_PLAYING) {
+			b = Icons.pauseButton();
+		}
+		if (s === STATUS_PAUSED) {
+			b = Icons.playButton();
+		}
+		if (s === STATUS_ERROR) {
+			b = Icons.errorButton();
+		}
 
-		this.setButtonIcon(b as SVGElement);
+		this.button.replaceChildren(b as SVGElement);
 		this.status = s;
 	}
 }

@@ -1,6 +1,6 @@
 // authors  : Alexander Bass
 // created  : 2024-5-12
-// modified : 2024-5-12
+// modified : 2024-5-13
 
 import { AudioPlayer, AudioTrack } from "./audioPlayer";
 import { MultiTrack } from "./multiTrackPlayer";

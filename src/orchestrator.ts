@@ -1,6 +1,6 @@
 // authors  : Alexander Bass
 // created  : 2024
-// modified : 2024-5-12
+// modified : 2024-5-13
 
 import { AudioPlayer, AudioPlayerI } from "./audioPlayer";
 
@@ -38,7 +38,7 @@ export class Orchestrator {
 			[
 				"stop",
 				(): void => {
-					this.activePlayer?.stop();
+					this.activePlayer?.pause();
 				},
 			],
 		];
@@ -52,7 +52,9 @@ export class Orchestrator {
 
 	addPlayer(player: AudioPlayer): void {
 		this.players.push(player);
-		player.UI.addEventListener("RSCaudioStart", () => {});
+		player.UI.addEventListener("RSCaudioStart", () => {
+			this.setActivePlayer(player);
+		});
 	}
 	setActivePlayer(p: AudioPlayer): void {
 		this.activePlayer = p;

@@ -37,7 +37,7 @@ export let formatDuration = (time: number): string => {
 
 // Audio metadata load callback
 export let audioMetadataLoad = (audio: HTMLAudioElement, callback: () => void): void => {
-	if (audio.duration !== undefined) {
+	if (audio.duration) {
 		callback();
 	} else {
 		audio.addEventListener(

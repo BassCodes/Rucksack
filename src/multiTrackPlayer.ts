@@ -1,8 +1,9 @@
 // authors  : Alexander Bass
 // created  : 2024
-// modified : 2024-5-12
+// modified : 2024-5-13
+
 import * as Icons from "./icons";
-import { AudioPlayer, AudioTrack, TrackStatus } from "./audioPlayer";
+import { AudioPlayer, AudioTrack, STATUS_PAUSED } from "./audioPlayer";
 import { newElements, formatDuration, audioMetadataLoad, N } from "./util";
 
 export class MultiTrack extends AudioPlayer {
@@ -85,6 +86,7 @@ export class MultiTrack extends AudioPlayer {
 			button.replaceChildren(Icons.errorButton());
 			duration.textContent = "track could not be loaded";
 		}
+
 		button.onclick = (): void => {
 			if (this.at != track) {
 				this.switchTrack(i);
@@ -102,10 +104,11 @@ export class MultiTrack extends AudioPlayer {
 			button.replaceChildren(Icons.pauseButton());
 			title.style.fontWeight = "bold";
 		};
+
 		track.a.onpause = (): void => {
 			// If the active track is paused, then the big button at the top will also need to be set as the play button
 			if (this.at == track) {
-				this.setStatus(TrackStatus.Paused);
+				this.setStatus(STATUS_PAUSED);
 			}
 			button.replaceChildren(Icons.playButton());
 			title.style.fontWeight = "";
@@ -114,7 +117,7 @@ export class MultiTrack extends AudioPlayer {
 		track.a.onended = (): void => {
 			this.next();
 			button.replaceChildren(Icons.playButton());
-			if (this.at == track) this.setStatus(TrackStatus.Paused);
+			if (this.at == track) this.setStatus(STATUS_PAUSED);
 		};
 
 		track.a.onerror = (e): void => {

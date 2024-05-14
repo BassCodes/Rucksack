@@ -11,6 +11,7 @@
 	margin: 5px 0px;
 	align-items: center;
 }
+
 .audioGroup {
 	margin: 0px 10px;
 	padding: 0px;
@@ -18,11 +19,13 @@
 		cursor: not-allowed;
 	}
 }
+
 #RSCui,
 #RSCcard {
 	display: flex;
 	font-family: "nimbus sans", sans-serif;
 }
+
 .RSCbutton {
 	display: flex;
 	background: rgba(0, 0, 0, 0);
@@ -32,50 +35,62 @@
 	box-sizing: content-box;
 	padding: 0;
 }
+
 .RSCskipbutton[inert] {
 	opacity: 0.6;
 }
+
 .RSCplaypause {
 	border: 1px solid gray;
 }
+
 .RSCskipbutton svg {
 	height: 15px;
 }
+
 .RSCplaypause:hover {
 	background: rgba(208, 208, 215, 0.3);
 }
+
 .RSCbigButton {
 	padding: 10px;
 	height: 20px;
 }
+
 .RSCsmallButton {
 	height: 11px;
 	padding: 5px;
 }
+
 .RSCsmallButton svg {
 	width: 11px;
 	height: 11px;
 }
+
 #RSCord,
 #RSCtimer {
 	color: gray;
 	user-select: none;
 }
+
 #RSCtimer {
 	font-size: 0.8em;
 	line-height: 1.6;
 }
+
 #RSCright {
 	flex-direction: column;
 	justify-content: space-between;
 	row-gap: 3px;
 }
+
 #RSCprogress {
 	width: 0;
 	max-width: 100%;
 	height: 100%;
 	background: gray;
 }
+
 #RSCprogressBox {
 	cursor: pointer;
 	width: 100%;
@@ -84,12 +99,14 @@
 	height: 10px;
 	border: 1px solid gray;
 }
+
 #RSCtop {
 	display: flex;
 	column-gap: 10px;
 	justify-content: space-between;
 	flex-wrap: wrap;
 }
+
 #RSCbottom {
 	display: flex;
 	column-gap: 9px;
