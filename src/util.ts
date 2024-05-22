@@ -1,7 +1,8 @@
 // authors  : Alexander Bass
 // created  : 2024
-// modified : 2024-5-12
+// modified : 2024-5-22
 
+/** Create an HTML element from a tag name. Alias for `document.createElement(tagname)` */
 export let N = <E extends keyof HTMLElementTagNameMap>(
 	tagName: E
 ): HTMLElementTagNameMap[E] => document.createElement(tagName);
@@ -37,6 +38,8 @@ export let formatDuration = (time: number): string => {
 
 // Audio metadata load callback
 export let audioMetadataLoad = (audio: HTMLAudioElement, callback: () => void): void => {
+	// I'm unsure of the validity of this method as it seems like it wouldn't catch all cases
+	// but it seems to work.
 	if (audio.duration) {
 		callback();
 	} else {

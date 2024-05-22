@@ -12,8 +12,6 @@
   "scripts": {
     "build": "node build.mjs prod",
     "build-dev": "node build.mjs dev",
-    "clean": "node build.mjs clean",
-    "watch": "webpack --mode=development --watch",
-    "watch-prod": "webpack --mode=production --watch"
+    "clean": "node build.mjs clean"
   }
 }

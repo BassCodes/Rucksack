@@ -1,6 +1,6 @@
 // authors  : Alexander Bass
 // created  : 2024
-// modified : 2024-5-13
+// modified : 2024-5-22
 
 import { N, audioMetadataLoad, formatDuration, newElements } from "./util";
 import * as Icons from "./icons";
@@ -95,11 +95,24 @@ export class AudioPlayer implements AudioPlayerI {
 		this.button.onclick = this.togglePlaying.bind(this);
 
 		this.progressBox.addEventListener("mousedown", (e) => {
+			let track_duration = this.at.a.duration || 0.1;
+
 			let percentage = e.offsetX / this.progressBox.scrollWidth;
-			this.at.a.currentTime = (this.at.a.duration || 0) * percentage;
-			this.progressBox.onmousemove = (): void => {
-				let percentage = e.offsetX / this.progressBox.scrollWidth;
-				this.quickSeek(percentage);
+			this.at.a.currentTime = track_duration * percentage;
+
+			this.progressBox.onmousemove = (e2): void => {
+				let current_percentage = (this.at.a.currentTime || 0) / track_duration;
+				let new_percentage = e2.offsetX / this.progressBox.scrollWidth;
+				// Fast seek is not implemented in Chrome
+				if (this.at.a.fastSeek) {
+					this.at.a.fastSeek(track_duration * new_percentage);
+				} else if (Math.abs(current_percentage - new_percentage) > 0.01) {
+					// alternative implementation:
+					// Check if percent difference between current time and
+					// seeked time is at least 1%. Then set time manually.
+					// It's still a bit jittery but better than nothing
+					this.at.a.currentTime = track_duration * new_percentage;
+				}
 			};
 		});
 		this.progressBox.onmouseleave = (): void => {
@@ -112,9 +125,12 @@ export class AudioPlayer implements AudioPlayerI {
 	}
 
 	switchTrack(trackno: number): void {
+		// Clean up previous active track
 		this.at.a.pause();
 		this.at.a.currentTime = 0;
 		this.at.a.ontimeupdate = null;
+
+		// Set new active track
 		this.at = this.tracks[trackno];
 		this.at.a.ontimeupdate = (): void => {
 			this.updateDuration();
@@ -145,25 +161,19 @@ export class AudioPlayer implements AudioPlayerI {
 		return this.activeNo == 0;
 	}
 
-	quickSeek(percentage: number): void {
-		this.at.a.fastSeek((this.at.a.duration || 0) * percentage);
-	}
-
 	updateDuration(): void {
-		let totalDuration = formatDuration(this.at.a.duration);
-		let currentTime = formatDuration(this.at.a.currentTime);
+		let current_track = this.at.a;
+
+		let totalDuration = formatDuration(current_track.duration);
+		let currentTime = formatDuration(current_track.currentTime);
 		this.timer.textContent = `${currentTime} / ${totalDuration}`;
 		this.progressBar.style.width = `${
-			100 * (this.at.a.currentTime / this.at.a.duration || 0)
+			100 * (current_track.currentTime / current_track.duration || 0.1)
 		}%`;
 	}
 
 	togglePlaying(): void {
-		if (this.at.a.paused) {
-			this.play();
-		} else {
-			this.pause();
-		}
+		this.at.a.paused ? this.play() : this.pause();
 	}
 
 	play(): void {
