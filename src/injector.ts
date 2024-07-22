@@ -1,10 +1,10 @@
 // authors  : Alexander Bass
 // created  : 2024-5-12
-// modified : 2024-5-13
+// modified : 2024-5-25
 
 import { AudioPlayer, AudioTrack } from "./audioPlayer";
 import { MultiTrack } from "./multiTrackPlayer";
-import { $ } from "./util";
+import { QUERY_SELECTOR_ALL, LOG_ERROR } from "./util";
 
 // Finds candidate audio containers and collections their audio elements.
 // Creates Rucksack players and injects them into the document.
@@ -12,18 +12,18 @@ import { $ } from "./util";
 export let extractSingleData = (container: Element): AudioTrack | undefined => {
 	let title = container.textContent?.trim();
 	if (!title || title.length == 0) {
-		console.error("RSC: audio title empty");
+		LOG_ERROR("RSC: audio title empty");
 		return;
 	}
 
-	let audios = $(container, "audio[controls]");
+	let audios = QUERY_SELECTOR_ALL(container, "audio[controls]");
 
 	if (audios.length > 1) {
-		console.error(`RSC: audio with title ${title} has too many audio tags.`);
+		LOG_ERROR(`RSC: audio with title ${title} has too many audio tags.`);
 		return;
 	} else if (audios.length == 0) {
-		console.error(
-			`RSC: audio with title ${title} has no audio tag with 'controls' attribute`
+		LOG_ERROR(
+			`RSC: track with title ${title} has no audio tag with 'controls' attribute`
 		);
 		return;
 	}
@@ -37,7 +37,7 @@ export let extractSingleData = (container: Element): AudioTrack | undefined => {
 export let getSinglePlayers = (): Array<AudioPlayer> => {
 	let players = [];
 
-	for (let container of $(document, "figure[data-rsc]")) {
+	for (let container of QUERY_SELECTOR_ALL(document, "figure[data-rsc]")) {
 		let track = extractSingleData(container);
 		if (track) {
 			let player = new AudioPlayer([track]);
@@ -50,9 +50,9 @@ export let getSinglePlayers = (): Array<AudioPlayer> => {
 };
 
 export let getMultiPlayers = (): Array<MultiTrack> => {
-	return $(document, "ol[data-rsc]").map((container) => {
+	return QUERY_SELECTOR_ALL(document, "ol[data-rsc]").map((container) => {
 		let p = new MultiTrack(
-			$(container, "li")
+			QUERY_SELECTOR_ALL(container, "li")
 				.map(extractSingleData)
 				.filter((t) => t) as Array<AudioTrack>
 		);

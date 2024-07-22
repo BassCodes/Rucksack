@@ -1,11 +1,41 @@
 // authors  : Alexander Bass
 // created  : 2024
-// modified : 2024-5-22
+// modified : 2024-5-25
+
+//
+// ALIASES
+//
+
+// Typing out the following global objects costs many bytes.
+// Aliasing them to a constant allows the mangler to shorten them to
+
+export let CONSOLE = console;
+
+export let LOG = CONSOLE.log;
+
+export let LOG_ERROR = CONSOLE.error;
+
+export let DOCUMENT = document;
+
+// Aliased Methods
+
+export let SET_MEDIA_ACTION_HANDLER = (a: MediaSessionAction, b: () => void): void =>
+	navigator?.mediaSession?.setActionHandler?.(a, b);
+
+export let APPEND_CHILDREN = (a: Element, ...b: Element[]): void => a.append(...b);
+
+export let SET_TEXT_CONTENT = (el: HTMLElement, c: string): void => {
+	el.textContent = c;
+};
+
+//
+// DOM MANIPULATION
+//
 
 /** Create an HTML element from a tag name. Alias for `document.createElement(tagname)` */
-export let N = <E extends keyof HTMLElementTagNameMap>(
+export let CREATE_ELEMENT = <E extends keyof HTMLElementTagNameMap>(
 	tagName: E
-): HTMLElementTagNameMap[E] => document.createElement(tagName);
+): HTMLElementTagNameMap[E] => DOCUMENT.createElement(tagName);
 
 /** Create dom elements of type `elementName`. Each further parameter will be the id of an element returned from the function
  Created to reduce large quantities of `document.createElement("div")` calls.
@@ -16,14 +46,19 @@ export let newElements = <E extends keyof HTMLElementTagNameMap>(
 	...elementIdList: Array<string>
 ): Array<HTMLElementTagNameMap[E]> =>
 	elementIdList.map((id) => {
-		let newDiv = N(elementName);
+		let newDiv = CREATE_ELEMENT(elementName);
 		newDiv.id = id;
 		return newDiv;
 	});
 
-export let $ = (node: Element | Document, sel: string): Array<Element> => [
-	...node.querySelectorAll(sel),
-];
+export let QUERY_SELECTOR_ALL = (
+	node: Element | Document,
+	sel: string
+): Array<Element> => [...node.querySelectorAll(sel)];
+
+//
+// MISC UTILITIES
+//
 
 let toStringPadZerosToStart = (n: number): string => (n || 0).toString().padStart(2, "0");
 

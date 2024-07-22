@@ -7,7 +7,7 @@
 //
 // More traditionally, one might have these icons requested over the network, but that's a point of failure, and is much more hassle.
 
-import { N } from "./util";
+import { CREATE_ELEMENT } from "./util";
 
 // Detect whether the client is in dark mode. The color scheme of the player is pretty good in most configurations, except for the play and pause icons.
 // The `dark` constant is used to make the icons lighter when dark mode is on.
@@ -20,7 +20,7 @@ let svgPost = " /></svg>";
 // The slimmest way of creating unique svg objects from a string I could find.
 // Unique objects are required to prevent extra characters being used to clone a reference each time an icon is used.
 let svgFromText = (input: string): SVGElement => {
-	let svgCreationContainer = N("div");
+	let svgCreationContainer = CREATE_ELEMENT("div");
 	// The input must be valid svg or else this code is unsafe.
 	svgCreationContainer.innerHTML = input;
 	return svgCreationContainer.firstChild as SVGElement;

@@ -1,14 +1,17 @@
 "use strict";
 // authors  : Alexander Bass
 // created  : 2024-5-13
-// modified : 2024-5-13
+// modified : 2024-5-26
 
 // Build script gluing Rollup, a customer CSS minifier, and terser together into three stages.
 
 // Previously the project was built with webpack, but the resulting JS files had a lot of unnecessary bytes.
 // With this build system, the output file size can be minimized.
 
+// This does essentially what a makefile would do, except cross platform
+
 import path from "node:path";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import { minify_sync } from "terser";
 import { rollup } from "rollup";
@@ -84,6 +87,7 @@ function injectCSS() {
 	const bundleWithInjectedCSS = bundle.replace(bundleTemplateString, `\`${finalCSS}\``);
 
 	console.log(`Unminified JS Size ${bundleWithInjectedCSS.length}B`);
+	console.log(`Unminified hash: "${sha256_hash_string(bundleWithInjectedCSS)}"`);
 
 	const outputDirPath = path.resolve(BUILD_DIRECTORY, "stage2");
 	if (!fs.existsSync(outputDirPath)) {
@@ -106,6 +110,8 @@ function cssMinify(cssString) {
 		.replaceAll("\\n}", "}")
 		.replaceAll(": ", ":")
 		.replaceAll(" {", "{")
+		.replaceAll(";}", "}")
+		.replaceAll(", ", ",")
 		.replaceAll("\\n", "");
 	const noComments = noUnneededSpacesAndNewlines.replaceAll(/\/\*.*\*\//g, "");
 
@@ -152,8 +158,13 @@ function minifyJS() {
 	const outputFilePath = path.resolve(BUILD_DIRECTORY, "stage3", "rucksack.min.js");
 
 	console.log(`Minified JS Size ${minifiedJS.length}B`);
+	console.log(`Minified hash: "${sha256_hash_string(minifiedJS)}"`);
 	fs.writeFileSync(outputFilePath, minifiedJS);
 	console.log("Stage 3 Done.");
+}
+
+function sha256_hash_string(str) {
+	return crypto.createHash("sha256").update(str).digest("hex");
 }
 
 main();

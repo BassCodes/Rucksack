@@ -1,10 +1,18 @@
 // authors  : Alexander Bass
 // created  : 2024
-// modified : 2024-5-13
+// modified : 2024-5-25
 
 import * as Icons from "./icons";
 import { AudioPlayer, AudioTrack, STATUS_PAUSED } from "./audioPlayer";
-import { newElements, formatDuration, audioMetadataLoad, N } from "./util";
+import {
+	newElements,
+	formatDuration,
+	audioMetadataLoad,
+	CREATE_ELEMENT,
+	LOG,
+	APPEND_CHILDREN,
+	SET_TEXT_CONTENT,
+} from "./util";
 
 export class MultiTrack extends AudioPlayer {
 	previousTrackButton: HTMLButtonElement;
@@ -13,22 +21,21 @@ export class MultiTrack extends AudioPlayer {
 	constructor(tracks: Array<AudioTrack>) {
 		super(tracks);
 
-		this.trackListElement = N("ol");
+		this.trackListElement = CREATE_ELEMENT("ol");
 		this.trackListElement.classList.add("audioGroup");
 
-		this.previousTrackButton = N("button");
-		this.previousTrackButton.append(Icons.previousTrack());
+		[this.previousTrackButton, this.nextTrackButton] = newElements("button", "", "");
+
+		APPEND_CHILDREN(this.previousTrackButton, Icons.previousTrack());
 		this.previousTrackButton.onclick = this.prev.bind(this);
 		this.previousTrackButton.ariaLabel = "Previous track";
 		this.previousTrackButton.setAttribute("inert", "");
 
-		this.nextTrackButton = N("button");
-		this.nextTrackButton.append(Icons.nextTrack());
+		APPEND_CHILDREN(this.nextTrackButton, Icons.nextTrack());
 		this.nextTrackButton.onclick = this.next.bind(this);
 		this.nextTrackButton.ariaLabel = "Next track";
-		// Though it would pointless compared to a `singleTrack`, an `audioGroup` with one track can be created.
+		// Though it would pointless compared to a `audioPlayer`, a `MultiTrack` with one track can be created.
 		// In this case, the next track button would never work, thus it is made inert.
-
 		if (this.tracks.length == 1) {
 			this.nextTrackButton.setAttribute("inert", "");
 		}
@@ -37,12 +44,12 @@ export class MultiTrack extends AudioPlayer {
 			b.classList.add("RSCbutton", "RSCskipbutton")
 		);
 
-		this.bottomBox.append(this.previousTrackButton, this.nextTrackButton);
+		APPEND_CHILDREN(this.bottomBox, this.previousTrackButton, this.nextTrackButton);
 
 		for (const [i, track] of this.tracks.entries()) {
 			let trackCard = this.setupTrackCard(i, track);
 
-			this.trackListElement.append(trackCard);
+			APPEND_CHILDREN(this.trackListElement, trackCard);
 		}
 	}
 
@@ -56,35 +63,33 @@ export class MultiTrack extends AudioPlayer {
 			"RSCord"
 		);
 
-		audioCard.id = "RSCcard";
 		audioCard.role = "listitem";
 
-		const button = N("button");
+		const button = CREATE_ELEMENT("button");
 		button.classList.add("RSCbutton", "RSCsmallButton", "RSCplaypause");
 		button.ariaLabel = "Play/Pause";
-		button.append(Icons.playButton());
+		APPEND_CHILDREN(button, Icons.playButton());
 
-		title.textContent = track.title;
+		SET_TEXT_CONTENT(title, track.title);
 
-		trackNumber.textContent = `${i + 1}.`;
+		SET_TEXT_CONTENT(trackNumber, `${i + 1}.`);
 
-		audioCard.append(button, trackNumber, title);
+		APPEND_CHILDREN(audioCard, button, trackNumber, title);
 
 		// Method to add length of track to the track's card. Only works if metadata is loaded
 		const addDurationToCard = (): void => {
-			duration.textContent = `${formatDuration(track.a.duration)}`;
-			audioCard.append(duration);
+			SET_TEXT_CONTENT(duration, `${formatDuration(track.a.duration)}`);
+			APPEND_CHILDREN(audioCard, duration);
 		};
 
 		// If metadata is already loaded, format duration
 		// Else, wait for metadata load event and then format duration
-
 		audioMetadataLoad(track.a, addDurationToCard);
 
 		if (track.a.error) {
 			button.classList.add("errored");
 			button.replaceChildren(Icons.errorButton());
-			duration.textContent = "track could not be loaded";
+			SET_TEXT_CONTENT(duration, "track could not be loaded");
 		}
 
 		button.onclick = (): void => {
@@ -121,8 +126,8 @@ export class MultiTrack extends AudioPlayer {
 		};
 
 		track.a.onerror = (e): void => {
-			console.log(e);
-			duration.textContent = "error";
+			LOG(e);
+			SET_TEXT_CONTENT(duration, "error");
 		};
 		return audioCard;
 	}

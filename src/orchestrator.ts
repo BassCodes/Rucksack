@@ -1,66 +1,32 @@
 // authors  : Alexander Bass
 // created  : 2024
-// modified : 2024-5-13
+// modified : 2024-5-25
 
-import { AudioPlayer, AudioPlayerI } from "./audioPlayer";
+import { AudioPlayer } from "./audioPlayer";
 
-export class Orchestrator {
-	players: Array<AudioPlayerI>;
-	activePlayer: null | AudioPlayerI;
-	constructor() {
-		this.players = [];
-		this.activePlayer = null;
-		const handlers = [
-			[
-				"previoustrack",
-				(): void => {
-					this.activePlayer?.prev();
-				},
-			],
-			[
-				"nexttrack",
-				(): void => {
-					this.activePlayer?.next();
-				},
-			],
-			[
-				"pause",
-				(): void => {
-					this.activePlayer?.pause();
-				},
-			],
-			[
-				"play",
-				(): void => {
-					this.activePlayer?.play();
-				},
-			],
-			[
-				"stop",
-				(): void => {
-					this.activePlayer?.pause();
-				},
-			],
-		];
-		for (const [key, val] of handlers) {
-			navigator.mediaSession.setActionHandler(
-				key as MediaSessionAction,
-				val as MediaSessionActionHandler
-			);
-		}
-	}
+interface Orchestrator {
+	players: AudioPlayer[];
+	activePlayer?: undefined | AudioPlayer;
+	addPlayer: (a: AudioPlayer) => void;
+	setActivePlayer: (a: AudioPlayer) => void;
+}
 
-	addPlayer(player: AudioPlayer): void {
+export let orchestrator: Orchestrator = {
+	players: [],
+	// These functions could be replaced with arrow functions with some hacks.
+	// Not sure if that would be worthwhile.
+	addPlayer: function (player: AudioPlayer): void {
 		this.players.push(player);
+
 		player.UI.addEventListener("RSCaudioStart", () => {
 			this.setActivePlayer(player);
 		});
-	}
-	setActivePlayer(p: AudioPlayer): void {
+	},
+	setActivePlayer: function (p: AudioPlayer): void {
 		this.activePlayer = p;
 		for (const player of this.players) {
 			if (p == player) continue;
 			player.pause();
 		}
-	}
-}
+	},
+};

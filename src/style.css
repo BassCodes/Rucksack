@@ -78,12 +78,6 @@
 	line-height: 1.6;
 }
 
-#RSCright {
-	flex-direction: column;
-	justify-content: space-between;
-	row-gap: 3px;
-}
-
 #RSCprogress {
 	width: 0;
 	max-width: 100%;

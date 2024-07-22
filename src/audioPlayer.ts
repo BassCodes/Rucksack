@@ -1,8 +1,16 @@
 // authors  : Alexander Bass
 // created  : 2024
-// modified : 2024-5-22
+// modified : 2024-5-25
 
-import { N, audioMetadataLoad, formatDuration, newElements } from "./util";
+import {
+	LOG,
+	CREATE_ELEMENT,
+	audioMetadataLoad,
+	formatDuration,
+	newElements,
+	APPEND_CHILDREN,
+	SET_TEXT_CONTENT,
+} from "./util";
 import * as Icons from "./icons";
 
 // Typescript enums automatically include code for formatting them to strings which is unneeded and takes up extra space
@@ -10,25 +18,20 @@ export const STATUS_PLAYING = 0;
 export const STATUS_PAUSED = 1;
 export const STATUS_ERROR = 2;
 
-export interface AudioPlayerI {
-	pause: () => void;
-	play: () => void;
-	next: () => void;
-	prev: () => void;
-}
+export type TRACK_STATUS = 0 | 1 | 2;
 
 export interface AudioTrack {
 	readonly a: HTMLAudioElement;
 	readonly title: string;
 }
 
-export class AudioPlayer implements AudioPlayerI {
+export class AudioPlayer {
 	/** Active Track Object */
 	at: AudioTrack;
 	/** Index of active track */
 	activeNo: number;
 	/** Status of active track */
-	status: number;
+	status: TRACK_STATUS;
 	/** List of tracks */
 	readonly tracks: Array<AudioTrack>;
 
@@ -53,7 +56,6 @@ export class AudioPlayer implements AudioPlayerI {
 		this.tracks = tracks;
 		this.at = tracks[0];
 		this.status = STATUS_PAUSED;
-		this.tracks.forEach((t) => t.a.setAttribute("preload", "metadata"));
 
 		[
 			this.UI,
@@ -71,23 +73,21 @@ export class AudioPlayer implements AudioPlayerI {
 			"",
 			"RSCbottom"
 		);
-		let [rightBox, top] = newElements("div", "RSCright", "RSCtop");
+		let [rightBox, top] = newElements("div", "", "RSCtop");
 
-		this.button = N("button");
+		this.button = CREATE_ELEMENT("button");
 		this.button.ariaLabel = "Play/Pause";
 		this.button.classList.add("RSCbutton", "RSCbigButton", "RSCplaypause");
 
-		this.progressBox.append(this.progressBar);
-		this.bottomBox.append(this.progressBox);
+		APPEND_CHILDREN(this.progressBox, this.progressBar);
+		APPEND_CHILDREN(this.bottomBox, this.progressBox);
 
-		this.activeTitle.textContent = this.at.title;
+		SET_TEXT_CONTENT(this.activeTitle, this.at.title);
 		this.button.replaceChildren(Icons.playButton());
 
-		top.append(this.activeTitle);
-		rightBox.append(top, this.bottomBox);
-		this.UI.append(this.button, rightBox);
-
-		top.append(this.timer);
+		APPEND_CHILDREN(top, this.activeTitle, this.timer);
+		APPEND_CHILDREN(rightBox, top, this.bottomBox);
+		APPEND_CHILDREN(this.UI, this.button, rightBox);
 
 		// Only display length of track once it is loaded
 		audioMetadataLoad(this.at.a, this.updateDuration.bind(this));
@@ -135,7 +135,7 @@ export class AudioPlayer implements AudioPlayerI {
 		this.at.a.ontimeupdate = (): void => {
 			this.updateDuration();
 		};
-		this.activeTitle.textContent = this.at.title;
+		SET_TEXT_CONTENT(this.activeTitle, this.at.title);
 		this.activeNo = trackno;
 	}
 
@@ -158,7 +158,7 @@ export class AudioPlayer implements AudioPlayerI {
 	}
 
 	isFirstTrack(): boolean {
-		return this.activeNo == 0;
+		return this.activeNo < 1;
 	}
 
 	updateDuration(): void {
@@ -166,9 +166,9 @@ export class AudioPlayer implements AudioPlayerI {
 
 		let totalDuration = formatDuration(current_track.duration);
 		let currentTime = formatDuration(current_track.currentTime);
-		this.timer.textContent = `${currentTime} / ${totalDuration}`;
+		SET_TEXT_CONTENT(this.timer, `${currentTime} / ${totalDuration}`);
 		this.progressBar.style.width = `${
-			100 * (current_track.currentTime / current_track.duration || 0.1)
+			100 * (current_track.currentTime / current_track.duration || 0)
 		}%`;
 	}
 
@@ -190,7 +190,7 @@ export class AudioPlayer implements AudioPlayerI {
 				if (!this.isLastTrack()) {
 					this.next();
 				}
-				console.log(e, this.at.a.error);
+				LOG(e, this.at.a.error);
 			});
 	}
 
@@ -199,7 +199,7 @@ export class AudioPlayer implements AudioPlayerI {
 		this.setStatus(STATUS_PAUSED);
 	}
 
-	setStatus(s: number): void {
+	setStatus(s: TRACK_STATUS): void {
 		let b;
 		if (s === STATUS_PLAYING) {
 			b = Icons.pauseButton();
